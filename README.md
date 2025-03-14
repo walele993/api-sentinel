@@ -1,7 +1,3 @@
-Below is an example of a README in English (in Markdown) for the APISentinel package:
-
----
-
 # API Sentinel
 
 A lightweight Node.js package for monitoring, analyzing, and alerting on API calls. API Sentinel intercepts HTTP requests made with Axios and Fetch, records detailed metrics, and uses a circuit breaker mechanism to help prevent cascading failures. It also supports automatic retries and Slack notifications when issues occur.
