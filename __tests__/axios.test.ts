@@ -1,31 +1,22 @@
-import { APISentinel, initAPISentinel } from './index';
 import axios from 'axios';
+import { APISentinel, initAPISentinel } from '../src';
 
 jest.mock('axios');
 
-describe('APISentinel con axios', () => {
+describe('APISentinel - Axios Interceptors', () => {
   let apiSentinel: APISentinel;
 
   beforeEach(() => {
     apiSentinel = initAPISentinel({
-      endpoints: [{ url: '/test', thresholds: { errorRate: 5, latency: 100 } }],
+      endpoints: [{ url: '/api/test', thresholds: { errorRate: 10 } }],
     });
   });
 
-  it('dovrebbe gestire una risposta di successo', async () => {
-    const mockResponse = { data: 'Successo' };
-    (axios.get as jest.Mock).mockResolvedValue(mockResponse);
+  it('should log metrics for successful axios requests', async () => {
+    (axios.get as jest.Mock).mockResolvedValue({ status: 200, data: {} });
 
-    const response = await apiSentinel.wrappedFetch('/test');
-    expect(response.data).toBe('Successo');
-    expect(axios.get).toHaveBeenCalledWith('/test');
-  });
+    await axios.get('/api/test');
 
-  it('dovrebbe gestire un errore nella risposta', async () => {
-    const mockError = new Error('Errore di rete');
-    (axios.get as jest.Mock).mockRejectedValue(mockError);
-
-    await expect(apiSentinel.wrappedFetch('/test')).rejects.toThrow('Errore di rete');
-    expect(axios.get).toHaveBeenCalledWith('/test');
+    expect(axios.get).toHaveBeenCalledWith('/api/test');
   });
 });

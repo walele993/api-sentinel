@@ -1,6 +1,8 @@
-// __mocks__/axios.ts
-export default {
-    get: jest.fn().mockResolvedValue({ status: 200, data: {} }),
-    post: jest.fn().mockResolvedValue({ status: 200, data: {} }),
-  };
-  
+module.exports = {
+  get: jest.fn(() => Promise.resolve({ data: {} })),
+  post: jest.fn(() => Promise.resolve({ data: {} })),
+  interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() }
+  }
+};
