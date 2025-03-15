@@ -31,7 +31,7 @@ npm install blue-watchdog
 Create a sentinel instance with your monitoring rules:  
 
 ```typescript
-import { initAPISentinel } from 'api-sentinel';
+import { initAPISentinel } from 'blue-watchdog';
 
 const sentinel = initAPISentinel({
   endpoints: [
