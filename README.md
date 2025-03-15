@@ -1,4 +1,4 @@
-# 🛡️ API Sentinel  
+# 🛡️ Blue Watchdog 
 
 *Robust API monitoring and circuit breaker for Node.js, with real-time alerts and analytics*  
 
@@ -6,7 +6,7 @@
 
 ## 🚀 Introduction  
 
-**API Sentinel** is a powerful monitoring tool designed to protect your Node.js applications from unreliable API dependencies. It tracks endpoints for **error rates** and **latency**, automatically triggers **circuit breakers**, and sends alerts to Slack when thresholds are breached. Ideal for microservices and distributed systems.  
+**Blue Watchdog** is a powerful monitoring tool designed to protect your Node.js applications from unreliable API dependencies. It tracks endpoints for **error rates** and **latency**, automatically triggers **circuit breakers**, and sends alerts to Slack when thresholds are breached. Ideal for microservices and distributed systems.  
 
 ### Key Features:  
 - 📊 **Real-time Metrics**: Track error rates & response times for critical endpoints  
@@ -21,7 +21,7 @@
 ## 📦 Installation  
 
 ```bash
-npm install api-sentinel
+npm install blue-watchdog
 ```
 
 ---
@@ -126,7 +126,7 @@ const result = await sentinel.handleRequest('/api/orders', async () => {
 
 ## 📈 Analytics  
 
-API Sentinel continuously analyzes:  
+Blue Watchdog continuously analyzes:  
 - **Error Rate**: `(errors / total_requests) * 100`  
 - **Latency**: Rolling average of response times  
 - **Circuit State**: Tracks open/closed/half-open status  
