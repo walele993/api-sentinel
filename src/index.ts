@@ -48,7 +48,7 @@ type RequestMetric = {
 };
 
 // Implementazione principale
-class APISentinel {
+export class APISentinel {
   private metrics: Map<string, RequestMetric[]> = new Map();
   private circuitBreakers: Map<string, CircuitBreaker> = new Map();
   private slackWebhook?: IncomingWebhook;
@@ -106,13 +106,13 @@ class APISentinel {
   public wrappedFetch = async (input: RequestInfo, init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input.url;
     const start = Date.now();
-
+  
     try {
-      const response = await this.handleRequest(url, () => fetch(input, init));
+      const response = await fetch(input, init); // Usa fetch direttamente
       this.recordMetric(url, {
         url,
         method: init?.method?.toUpperCase() || 'GET',
-        status: response.status,
+        status: response?.status || 500, // Assicurati che response sia definito
         responseTime: Date.now() - start,
       });
       return response;
@@ -120,7 +120,7 @@ class APISentinel {
       this.recordMetric(url, {
         url,
         method: init?.method?.toUpperCase() || 'GET',
-        status: 500,
+        status: 500, // Usa uno stato di errore predefinito
         responseTime: Date.now() - start,
       });
       throw error;

@@ -1,34 +1,24 @@
-# API Sentinel
+# 🛡️ API Sentinel  
 
-A lightweight Node.js package for monitoring, analyzing, and alerting on API calls. API Sentinel intercepts HTTP requests made with Axios and Fetch, records detailed metrics, and uses a circuit breaker mechanism to help prevent cascading failures. It also supports automatic retries and Slack notifications when issues occur.
-
----
-
-## Features
-
-- **API Interception:**  
-  Automatically intercepts API calls made via Axios and Fetch.
-
-- **Metrics Collection:**  
-  Records key metrics such as URL, HTTP method, status code, response time, and timestamp. Metrics are organized by endpoint.
-
-- **Circuit Breaker:**  
-  Uses the Opossum library to implement a circuit breaker, preventing the system from being overwhelmed by repeated failures.
-
-- **Automatic Retries:**  
-  Integrates with pRetry to automatically retry failed API calls up to a specified number of attempts.
-
-- **Analytics and Alerts:**  
-  Periodically analyzes collected metrics (error rates and average latency) and sends alerts via Slack if thresholds are exceeded.
-
-- **Endpoint-Specific Monitoring:**  
-  Supports configuration of multiple endpoints, each with its own monitoring thresholds and settings.
+*Robust API monitoring and circuit breaker for Node.js, with real-time alerts and analytics*  
 
 ---
 
-## Installation
+## 🚀 Introduction  
 
-Install API Sentinel via npm:
+**API Sentinel** is a powerful monitoring tool designed to protect your Node.js applications from unreliable API dependencies. It tracks endpoints for **error rates** and **latency**, automatically triggers **circuit breakers**, and sends alerts to Slack when thresholds are breached. Ideal for microservices and distributed systems.  
+
+### Key Features:  
+- 📊 **Real-time Metrics**: Track error rates & response times for critical endpoints  
+- ⚡ **Circuit Breaking**: Automatically block failing endpoints to prevent cascading failures  
+- 🚨 **Slack Alerts**: Get notified instantly when thresholds are exceeded  
+- 🔌 **Universal Support**: Works with Axios, fetch, and any HTTP client  
+- 🛠️ **Custom Thresholds**: Define per-endpoint error/latency limits  
+- 📈 **Smart Analytics**: Rolling 5-minute window for accurate health checks  
+
+---
+
+## 📦 Installation  
 
 ```bash
 npm install api-sentinel
@@ -36,102 +26,161 @@ npm install api-sentinel
 
 ---
 
-## Usage
+## 🛠️ Configuration  
 
-Initialize API Sentinel in your application by passing a configuration object:
+Create a sentinel instance with your monitoring rules:  
 
-```javascript
+```typescript
 import { initAPISentinel } from 'api-sentinel';
 
-const config = {
+const sentinel = initAPISentinel({
   endpoints: [
     {
-      url: /https:\/\/api\.example\.com\/.*/, // monitor endpoints matching this pattern
+      url: '/api/payments',  // String or RegExp
       thresholds: {
-        errorRate: 5,   // Alert if error rate exceeds 5%
-        latency: 300,   // Alert if average latency exceeds 300ms
-      },
-    },
+        errorRate: 10,    // Max 10% errors (optional)
+        latency: 1000     // Max 1s response time (optional)
+      }
+    }
   ],
   alert: {
-    slackWebhook: 'https://hooks.slack.com/services/your/slack/webhook',
+    slackWebhook: 'https://hooks.slack.com/services/...'  // Optional
   },
   circuitBreaker: {
-    threshold: 3,       // Circuit trips after 3 consecutive failures
-    cooldown: 10000,    // Circuit breaker cooldown period in milliseconds (10 seconds)
-  },
-};
-
-initAPISentinel(config);
+    threshold: 50,  // 50% errors to open circuit (default)
+    cooldown: 30000 // 30s cooldown (default)
+  }
+});
 ```
 
-With this configuration, API Sentinel intercepts requests made with Axios or Fetch, records their metrics, and triggers a Slack alert if the defined error rate or latency thresholds are exceeded.
+---
+
+## 💻 Usage  
+
+### Axios (Automatic Monitoring)  
+```typescript
+import axios from 'axios';
+
+// All Axios requests are automatically instrumented!
+axios.get('/api/payments');
+```
+
+### Fetch Wrapper  
+```typescript
+// Replace native fetch with monitored version
+const response = await sentinel.wrappedFetch('/api/users', {
+  method: 'POST',
+  body: JSON.stringify({ user: 'new' })
+});
+```
+
+### Manual Request Handling  
+```typescript
+// Use the circuit breaker directly
+const result = await sentinel.handleRequest('/api/orders', async () => {
+  return await makeOrderRequest();
+});
+```
 
 ---
 
-## Configuration
+## 🔧 How It Works  
 
-### Endpoints
+1. **Metrics Collection**:  
+   - Tracks all HTTP requests (success/failure)  
+   - Records response times and status codes  
+   - Maintains 5-minute rolling window  
 
-- **url:**  
-  A string or RegExp that identifies the endpoint(s) to monitor.
+2. **Circuit Breaking**:  
+   - Opens circuit when error threshold exceeded  
+   - Blocks requests during cooldown period  
+   - Automatically retries after recovery  
 
-- **thresholds:**  
-  Optional thresholds for:
-  - **errorRate:** Maximum acceptable error percentage.
-  - **latency:** Maximum acceptable average response time in milliseconds.
-
-### Alerts
-
-- **slackWebhook:**  
-  Provide your Slack webhook URL to enable alert notifications via Slack.
-
-### Circuit Breaker
-
-- **threshold:**  
-  Number of consecutive failures before the circuit breaker trips.
-
-- **cooldown:**  
-  Duration (in milliseconds) the circuit breaker remains open before attempting to reset.
+3. **Alerting**:  
+   - Throttled Slack notifications  
+   - Instant visibility into degraded endpoints  
 
 ---
 
-## Requirements
+## ⚙️ Configuration Details  
 
-- **Node.js:** >= 16.0  
-- **npm:** >= 7.0
+### `EndpointConfig`  
+| Property     | Type           | Description                          |
+|--------------|----------------|--------------------------------------|
+| `url`        | string/RegExp  | Endpoint to monitor (exact or regex) |
+| `thresholds` | object         | Error/latency limits (optional)      |
+
+### `thresholds`  
+| Property     | Type    | Default | Description                     |
+|--------------|---------|---------|---------------------------------|
+| `errorRate`  | number  | -       | Maximum allowed error % (0-100) |
+| `latency`    | number  | -       | Maximum avg response time (ms)  |
+
+### `circuitBreaker`  
+| Property    | Type    | Default | Description                     |
+|-------------|---------|---------|---------------------------------|
+| `threshold` | number  | 50      | Error % to trigger circuit open |
+| `cooldown`  | number  | 10000   | Cooldown duration in ms         |
 
 ---
 
-## Contributing
+## 📈 Analytics  
 
-Contributions are welcome! To contribute:
+API Sentinel continuously analyzes:  
+- **Error Rate**: `(errors / total_requests) * 100`  
+- **Latency**: Rolling average of response times  
+- **Circuit State**: Tracks open/closed/half-open status  
 
-1. **Fork** the repository.
-2. **Clone** your fork:
+Metrics are checked every 60 seconds against your thresholds.  
+
+---
+
+## 🔌 Supported Libraries  
+
+| Library      | Support          | Notes                          |
+|--------------|------------------|--------------------------------|
+| **Axios**    | ✅ Automatic     | Uses interceptors              |
+| **fetch**    | ✅ Wrapper       | Use `wrappedFetch` method      |
+| **HTTP**     | 🔜 Coming Soon   |                                |
+| **Express**  | 🔜 Coming Soon   | Middleware support             |
+
+---
+
+## 🛡️ Requirements  
+
+- Node.js `>=16.0`  
+- TypeScript `>=4.0` (recommended)  
+
+---
+
+## 🤝 Contributing  
+
+Contributions welcome!  
+
+1. **Fork** the repository  
+2. **Clone** your fork:  
    ```bash
-   git clone https://github.com/yourusername/api-sentinel.git
-   ```
-3. **Create a new branch:**
+   git clone https://github.com/yourusername/api-sentinel.git  
+   ```  
+3. Create a **feature branch**:  
    ```bash
-   git checkout -b feature-your-feature
-   ```
-4. **Make your changes** and commit them.
-5. **Push** your changes:
-   ```bash
-   git push origin feature-your-feature
-   ```
-6. **Submit a pull request.**
+   git checkout -b feature-enhancement  
+   ```  
+4. Commit changes and **push**  
+5. Open a **pull request**  
 
 ---
 
-## License
+## 📄 License  
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.  
 
 ---
 
-## Credits
+## 🌟 Credits  
 
-API Sentinel was created by Gabriele Meucci.  
-For any questions or issues, please open an issue in the repository or contact the maintainer.
+This project was created by Gabriele Meucci.
+
+---
+
+*Keep your APIs healthy and your systems resilient! 🛡️*

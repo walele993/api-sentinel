@@ -1,6 +1,6 @@
-module.exports = jest.fn().mockImplementation((url, init) => ({
-  status: 200,
-  ok: true,
-  json: () => Promise.resolve({}),
-  text: () => Promise.resolve(''),
-}));
+export default jest.fn(() =>
+  Promise.resolve({
+    status: 200,
+    json: () => Promise.resolve({}),
+  })
+);

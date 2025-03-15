@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "CommonJS",
     "target": "ESNext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -9,5 +12,6 @@
     "outDir": "./dist",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"]
+  "include": ["src", "__tests__", "__mocks__"],
+  "exclude": ["node_modules", "dist"]
 }
