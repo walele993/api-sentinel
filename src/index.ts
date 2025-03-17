@@ -5,7 +5,7 @@ import { IncomingWebhook } from '@slack/webhook';
 import { subMinutes } from 'date-fns';
 import pkg from 'lodash';
 const { throttle } = pkg;
-
+ 
 // Logger con livelli configurabili
 class Logger {
   static log(message: string) {
