@@ -149,7 +149,7 @@ Metrics are checked every 60 seconds against your thresholds.
 ## 🛡️ Requirements  
 
 - Node.js `>=16.0`  
-- TypeScript `>=4.0` (recommended)  
+- TypeScript `>=4.0` (recommended)
 
 ---
 
